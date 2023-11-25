@@ -43,9 +43,7 @@ in your Game when the user clicks StartGame.
 
 -}
 type alias Settings =
-    { playMode : PlayMode
-    , computerDifficulty : ComputerDifficulty
-    , numEvilMembers : Int
+    { numEvilMembers : Int
     , numSpies : Int 
     , spyRadius: Float
     , numDevices : Int 
@@ -61,9 +59,7 @@ For simplicity's sake, every setting MUST have a default value.
 -}
 default : Settings
 default =
-    { playMode = HumanVsHuman
-    , computerDifficulty = Easy
-    , numEvilMembers = 200
+    { numEvilMembers = 200
     , numSpies = 10
     , spyRadius = 10.0
     , numDevices = 10
@@ -79,9 +75,7 @@ setting). This is typically the same type as your setting.
 
 -}
 type Msg
-    = SetPlayMode PlayMode
-    | SetComputerDifficulty ComputerDifficulty
-    | SetNumPeople Int 
+    = SetNumPeople Int 
     | SetNumSpies Int
     | SetSpyRadius Float
     | SetNumDevices Int
@@ -98,10 +92,6 @@ with the new payload. You can see the implementations below for this.
 update : Msg -> Settings -> Settings
 update msg settings =
     case msg of
-        SetPlayMode value ->
-            { settings | playMode = value }
-        SetComputerDifficulty value ->
-            { settings | computerDifficulty = value }
         SetNumPeople value ->
             { settings | numEvilMembers = value }
         SetNumSpies value ->
@@ -138,19 +128,7 @@ You can customise this further if you so wish (see the HELPER FUNCTIONS section 
 -}
 pickers : Settings -> List SettingPickerItem
 pickers settings =
-    [ pickChoiceButtons 
-        { label = "Play Mode"
-        , onSelect = SetPlayMode
-        , current = settings.playMode
-        , options = [ ("Human vs Human", HumanVsHuman), ("Human vs Computer", HumanVsComputer), ("Computer vs Human", ComputerVsHuman) ]
-        }
-    , pickChoiceButtons
-        { label = "Computer Difficulty"
-        , onSelect = SetComputerDifficulty
-        , current = settings.computerDifficulty
-        , options = [ ("Easy", Easy), ("Hard", Hard) ]
-        }
-    , inputInt
+    [ inputInt
         { label = "Number of EVIL Members at Banquet"
         , value = settings.numEvilMembers
         , min = 50
@@ -194,54 +172,6 @@ pickers settings =
         }
     ]
 
-type PlayMode
-    = HumanVsHuman
-    | HumanVsComputer
-    | ComputerVsHuman
-
-playModeToString : PlayMode -> String
-playModeToString playMode =
-    case playMode of
-        HumanVsHuman ->
-            "Human vs Human"
-        HumanVsComputer ->
-            "Human vs Computer"
-        ComputerVsHuman ->
-            "Computer vs Human"
-
-stringToPlayMode : String -> PlayMode
-stringToPlayMode string =
-    case string of
-        "Human vs Human" ->
-            HumanVsHuman
-        "Human vs Computer" ->
-            HumanVsComputer
-        "Computer vs Human" ->
-            ComputerVsHuman
-        _ ->
-            HumanVsHuman
-
-type ComputerDifficulty
-    = Easy 
-    | Hard
-
-computerDifficultyToString : ComputerDifficulty -> String
-computerDifficultyToString difficulty =
-    case difficulty of
-        Easy ->
-            "Easy"
-        Hard ->
-            "Hard"
-
-stringToComputerDifficulty : String -> ComputerDifficulty
-stringToComputerDifficulty string =
-    case string of
-        "Easy" ->
-            Easy
-        "Hard" ->
-            Hard
-        _ ->
-            Easy
 
 
 -- =============================================================================
@@ -560,24 +490,21 @@ viewPickerItem settings item =
                 ]
 
         PickChoiceButtons data ->
-            if data.label == "Play Mode" || ((settings.playMode /= HumanVsHuman) && (data.label == "Computer Difficulty")) then 
-                div [ class "setting-picker-item" ]
-                    [ label [ class "setting-picker-item-label" ] [ text data.label ]
-                    , div [ class "setting-picker-item-input setting-picker-item-input-buttons" ]
-                        (List.map
-                            (\{ label, onSelect, isSelected } ->
-                                button
-                                    [ class ("setting-picker-item-button setting-picker-item-button-" ++ String.replace " " "-" label)
-                                    , classList [ ( "selected", isSelected ) ]
-                                    , onClick onSelect
-                                    ]
-                                    [ text label ]
-                            )
-                            data.options
+            div [ class "setting-picker-item" ]
+                [ label [ class "setting-picker-item-label" ] [ text data.label ]
+                , div [ class "setting-picker-item-input setting-picker-item-input-buttons" ]
+                    (List.map
+                        (\{ label, onSelect, isSelected } ->
+                            button
+                                [ class ("setting-picker-item-button setting-picker-item-button-" ++ String.replace " " "-" label)
+                                , classList [ ( "selected", isSelected ) ]
+                                , onClick onSelect
+                                ]
+                                [ text label ]
                         )
-                    ]
-            else
-                div [] []
+                        data.options
+                    )
+                ]
 
         PickChoiceDropdown data ->
             div [ class "setting-picker-item" ]
