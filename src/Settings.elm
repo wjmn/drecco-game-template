@@ -43,12 +43,7 @@ in your Game when the user clicks StartGame.
 
 -}
 type alias Settings =
-    { numEvilMembers : Int
-    , numSpies : Int 
-    , spyRadius: Float
-    , numDevices : Int 
-    , deviceRadius: Float
-    , randomSeed : Int
+    { initialCount : Int
     }
 
 
@@ -59,12 +54,7 @@ For simplicity's sake, every setting MUST have a default value.
 -}
 default : Settings
 default =
-    { numEvilMembers = 200
-    , numSpies = 10
-    , spyRadius = 10.0
-    , numDevices = 10
-    , deviceRadius = 6.0
-    , randomSeed = 0
+    { initialCount = 0
     }
 
 
@@ -75,12 +65,7 @@ setting). This is typically the same type as your setting.
 
 -}
 type Msg
-    = SetNumPeople Int 
-    | SetNumSpies Int
-    | SetSpyRadius Float
-    | SetNumDevices Int
-    | SetDeviceRadius Float
-    | SetRandomSeed Int
+    = SetInitialCount Int
 
 
 {-| STEP 4: Define explicitly what happens to your settings when a message is received.
@@ -92,18 +77,8 @@ with the new payload. You can see the implementations below for this.
 update : Msg -> Settings -> Settings
 update msg settings =
     case msg of
-        SetNumPeople value ->
-            { settings | numEvilMembers = value }
-        SetNumSpies value ->
-            { settings | numSpies = value }
-        SetSpyRadius value ->
-            { settings | spyRadius = value }
-        SetNumDevices value ->
-            { settings | numDevices = value }
-        SetDeviceRadius value ->
-            { settings | deviceRadius = value }
-        SetRandomSeed value -> 
-            { settings | randomSeed = value }
+        SetInitialCount count ->
+            { settings | initialCount = count }
 
 
 {-| STEP 5: Define a list of pickers for each setting you want to be able to change.
@@ -128,47 +103,12 @@ You can customise this further if you so wish (see the HELPER FUNCTIONS section 
 -}
 pickers : Settings -> List SettingPickerItem
 pickers settings =
-    [ inputInt
-        { label = "Number of EVIL Members at Banquet"
-        , value = settings.numEvilMembers
-        , min = 50
-        , max = 500
-        , onChange = SetNumPeople
-        }
-    , inputInt
-        { label = "GOOD: Number of Spies"
-        , value = settings.numSpies
-        , min = 3
-        , max = 16
-        , onChange = SetNumSpies
-        }
-    , inputFloat
-        { label = "Spy Listening Radius"
-        , value = settings.spyRadius
-        , min = 3.0
-        , max = 20.0
-        , onChange = SetSpyRadius
-        }
-    , inputInt
-        { label = "EVIL: Number of Antispy Devices"
-        , value = settings.numDevices
-        , min = 3
-        , max = 16
-        , onChange = SetNumDevices
-        }
-    , inputFloat
-        { label = "Device Detection Radius"
-        , value = settings.deviceRadius
-        , min = 3.0
-        , max = 20.0
-        , onChange = SetDeviceRadius
-        }
-    , inputInt
-        { label = "Random Seed for Map Generation"
-        , value = settings.randomSeed
+    [ inputIntRange
+        { label = "Initial Count"
+        , value = settings.initialCount
         , min = 0
-        , max = 9999999
-        , onChange = SetRandomSeed
+        , max = 100
+        , onChange = SetInitialCount
         }
     ]
 
@@ -409,15 +349,7 @@ viewPickerItem settings item =
                 ]
 
         InputFloat data ->
-            let
-               extraClass = 
-                    if data.label |> String.contains "Radius" then
-                        "half-width right"
-                    else
-                        ""
-            in
- 
-            div [ class "setting-picker-item", class extraClass ]
+            div [ class "setting-picker-item" ]
                 [ label [ class "setting-picker-item-label" ] [ text data.label ]
                 , input
                     [ class "setting-picker-item-input setting-picker-item-input-float"
@@ -431,31 +363,21 @@ viewPickerItem settings item =
                 ]
 
         InputInt data ->
-            let
-               extraClass = 
-                    if data.label == "GOOD: Number of Spies" || data.label == "EVIL: Number of Antispy Devices" then
-                        "half-width"
-                    else
-                        ""
-            in
-            
-                div [ class "setting-picker-item", class extraClass ]
-                    [ label [ class "setting-picker-item-label" ] [ text data.label ]
-                    , input
-                        [ class "setting-picker-item-input setting-picker-item-input-int"
-                        , type_ "number"
-                        , value (String.fromInt data.value)
-                        , Html.Attributes.min (String.fromInt data.min)
-                        , Html.Attributes.max (String.fromInt data.max)
-                        , onInput (String.toInt >> Maybe.withDefault 0 >> data.onChange)
-                        ]
-                        []
+            div [ class "setting-picker-item" ]
+                [ label [ class "setting-picker-item-label" ] [ text data.label ]
+                , input
+                    [ class "setting-picker-item-input setting-picker-item-input-int"
+                    , type_ "number"
+                    , value (String.fromInt data.value)
+                    , Html.Attributes.min (String.fromInt data.min)
+                    , Html.Attributes.max (String.fromInt data.max)
+                    , onInput (String.toInt >> Maybe.withDefault 0 >> data.onChange)
                     ]
+                    []
+                ]
 
         InputFloatRange data ->
-
-           
-            div [ class "setting-picker-item"]
+            div [ class "setting-picker-item" ]
                 [ label [ class "setting-picker-item-label" ] [ text data.label ]
                 , div [ class "setting-picker-item-input-container" ]
                     [ input

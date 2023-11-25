@@ -16,8 +16,6 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Settings exposing (..)
-import Random
-import Browser.Events
 
 
 
@@ -43,7 +41,7 @@ screen with the default settings.
 -}
 init : ( Model, Cmd Msg )
 init =
-    ( SettingsScreen Settings.default, Random.generate ReceivedRandomSeed (Random.int 0 9999999) )
+    ( SettingsScreen Settings.default, Cmd.none )
 
 
 
@@ -69,7 +67,6 @@ type Msg
     = SettingsMsg Settings.Msg
     | GameplayMsg Game.Msg
     | ClickedStartGame
-    | ReceivedRandomSeed Int
     | ClickedRestart
 
 
@@ -96,17 +93,14 @@ update msg screen =
     case screen of
         SettingsScreen settings ->
             case msg of
-                -- Fill in the initial random seed value
-                ReceivedRandomSeed seed -> 
-                    SettingsScreen (Settings.update (Settings.SetRandomSeed seed) settings)
-                        |> withCmd Cmd.none
                 -- If we get a Settings message, we update the Settings screen as per the update function in Settings.elm.
                 SettingsMsg settingsMsg ->
                     SettingsScreen (Settings.update settingsMsg settings)
                         |> withCmd Cmd.none
 
+                -- When the user clicks Start Game, we initialize a new Game with the current settings.
                 ClickedStartGame ->
-                    Game.init settings 
+                    Game.init settings
                         |> mapGameCmd
 
                 -- You shouldn't get any Gameplay messages from the Settings screen, but if you do, just return the current screen as-is.
@@ -172,8 +166,8 @@ view screen =
             div [ id "settings-screen", class "screen" ]
                 [ div [ id "settings-modal" ]
                     [ div [ id "settings-modal-header" ]
-                        [ h1 [ id "settings-modal-header-title" ] [ text "Effective Eavesdropping" ]
-                        , h2 [ id "settings-modal-header-team" ] [ text "wjmn" ]
+                        [ h1 [ id "settings-modal-header-title" ] [ text "My Game Name" ]
+                        , h2 [ id "settings-modal-header-team" ] [ text "My Team Name" ]
                         ]
                     , div [ id "settings-modal-intro" ] [ introText ]
                     , div [ id "settings-modal-body" ] [ Settings.view settings |> Html.map SettingsMsg ]
@@ -210,6 +204,6 @@ main =
         { view = view
         , init = \_ -> init
         , update = update
-        , subscriptions = always (Browser.Events.onResize (\x y -> Game.ResizedWindow x y |> GameplayMsg))
+        , subscriptions = always Sub.none
         }
 
