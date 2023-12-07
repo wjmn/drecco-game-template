@@ -10,12 +10,12 @@ import Html.Events exposing (..)
 --------------------------------------------------------------------------------
 -- =============================================================================
 -- =============================================================================
--- NOTE: YOU PROBABLY DON'T HAVE TO MODIFY ANYTHING BELOW THIS LINE
+-- NOTE: YOU PROBABLY DON'T HAVE TO MODIFY ANYTHING HERE
 -- =============================================================================
 -- =============================================================================
 --------------------------------------------------------------------------------
 -- HELPER FUNCTIONS
--- If your use cases are covered by the basic types of settings above, you don't have to
+-- If your use cases are covered by the basic types of settings, you don't have to
 -- edit any of the code below (it's boilerplate to make things easier for you).
 -- However, if you need extra customisation, then you're welcome to edit it
 -- if you know what you're doing (e.g. show a setting only in certain conditions,
