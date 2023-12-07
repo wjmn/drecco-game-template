@@ -1,17 +1,5 @@
 module SettingsComponents exposing (..)
 
-{-| This module handles everything on the Settings screen.
-
-TODO: You will need to modify this file to add / remove settings for your game.
-
-Adding/removing a setting is a 5-step process.
-(I know it seems like a lot, but it is necessary so Elm can make static
-guarantees at compile time about your Settings).
-
-I've outlined the five steps below under SETTING DEFINITIONS.
-
--}
-
 import Common exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -19,19 +7,6 @@ import Html.Events exposing (..)
 
 
 
---------------------------------------------------------------------------------
--- SETTING DEFINITIONS
---
--- You can add / delete settings by modifying the following 5 steps:
--- 1. Define the data model for your settings and their types.
--- 2. Define the default values for your settings.
--- 3. Add a message type to update your settings.
--- 4. Define explicitly what happens to your settings when a message is received.
--- 5. Define a list of pickers for each setting you want to be able to change.
---
--- This should cover most of the basic use cases. If you need extra
--- customisation, you're welcome to edit the code below or delete everything
--- here and start from scratch.
 --------------------------------------------------------------------------------
 -- =============================================================================
 -- =============================================================================
